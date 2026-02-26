@@ -14,6 +14,9 @@ module.exports = {
         'fadeInUp': 'fadeInUp 1s ease-out forwards',
         'fadeInUpDelay1': 'fadeInUp 1s ease-out 0.2s forwards',
         'fadeInUpDelay2': 'fadeInUp 1s ease-out 0.4s forwards',
+
+        // ✅ ADD THIS ONLY (for popping text one-by-one)
+        'popIn': 'popIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards',
       },
       keyframes: {
         fadeIn: {
@@ -53,6 +56,13 @@ module.exports = {
             opacity: '1', 
             transform: 'translateY(0)' 
           },
+        },
+
+        // ✅ ADD THIS ONLY (pop style)
+        popIn: {
+          '0%': { opacity: '0', transform: 'translateY(14px) scale(0.98)' },
+          '60%': { opacity: '1', transform: 'translateY(-2px) scale(1.01)' },
+          '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
         },
       },
     },
