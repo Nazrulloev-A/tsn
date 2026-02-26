@@ -2,6 +2,7 @@ import backgroundVideo from "../assets/global-bg.mp4";
 import Services from "../pages/Services";
 import { useState } from "react";
 import Faq from "./FAQ";
+import Contact from "./Contact";
 
 const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -117,12 +118,7 @@ const Home = () => {
       <Faq />
 
       {/* Contact */}
-      <section
-        id="contact"
-        className="min-h-screen bg-black text-white flex items-center justify-center"
-      >
-        <h2 className="text-4xl">Contact Us</h2>
-      </section>
+      <Contact/>
     </>
   );
 };
