@@ -6,22 +6,18 @@ const Services = () => {
       id="services"
       className="relative w-full bg-gradient-to-b from-slate-50 to-white py-16 md:py-20"
     >
-      {/* soft decorative background blobs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-sky-200/40 blur-3xl" />
         <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-blue-200/40 blur-3xl" />
       </div>
 
       <div className="relative mx-auto w-full max-w-6xl px-6">
-        {/* Title */}
         <h2 className="text-center text-3xl md:text-5xl font-extrabold text-slate-800">
           Our Services
         </h2>
 
-        {/* Main Card */}
         <div className="mt-10 rounded-2xl border border-slate-200 bg-white shadow-[0_10px_30px_rgba(15,23,42,0.08)]">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 md:p-10">
-            {/* Left Illustration (SVG - no external asset needed) */}
             <div className="flex items-center justify-center">
               <div className="w-full max-w-md">
                 <svg viewBox="0 0 600 420" className="w-full h-auto">
@@ -32,14 +28,11 @@ const Services = () => {
                     </linearGradient>
                   </defs>
 
-                  {/* card bg */}
                   <rect x="40" y="40" width="520" height="320" rx="22" fill="url(#g1)" />
-                  {/* screen */}
                   <rect x="95" y="90" width="210" height="145" rx="14" fill="#ffffff" />
                   <rect x="115" y="110" width="170" height="12" rx="6" fill="#c7d2fe" />
                   <rect x="115" y="135" width="120" height="10" rx="5" fill="#bfdbfe" />
                   <rect x="115" y="155" width="150" height="10" rx="5" fill="#bfdbfe" />
-                  {/* chart */}
                   <path
                     d="M120 205 C160 165, 190 215, 230 180 C260 160, 285 175, 300 150"
                     stroke="#60a5fa"
@@ -51,13 +44,11 @@ const Services = () => {
                   <circle cx="230" cy="180" r="7" fill="#3b82f6" />
                   <circle cx="300" cy="150" r="7" fill="#3b82f6" />
 
-                  {/* person */}
                   <circle cx="390" cy="160" r="30" fill="#93c5fd" />
                   <rect x="352" y="192" width="78" height="100" rx="18" fill="#60a5fa" />
                   <rect x="330" y="212" width="44" height="18" rx="9" fill="#3b82f6" />
                   <rect x="410" y="212" width="44" height="18" rx="9" fill="#3b82f6" />
 
-                  {/* dots */}
                   <circle cx="470" cy="110" r="10" fill="#bae6fd" />
                   <circle cx="500" cy="135" r="7" fill="#bfdbfe" />
                   <circle cx="455" cy="310" r="10" fill="#bfdbfe" />
@@ -65,7 +56,6 @@ const Services = () => {
               </div>
             </div>
 
-            {/* Right Content */}
             <div className="flex flex-col justify-center">
               <h3 className="text-xl md:text-2xl font-bold text-slate-800">
                 Cybersecurity Training Program
@@ -101,34 +91,21 @@ const Services = () => {
             </div>
           </div>
 
-          {/* Bottom Feature Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 border-t border-slate-200 p-6 md:p-8 bg-slate-50/40 rounded-b-2xl">
             <FeatureCard
               title="Job Placement-Driven Model"
               text="We are outcome focused. We provide structured coaching, mock interviews, and job-ready support."
-              icon={
-                <div className="h-11 w-11 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold">
-                  ✓
-                </div>
-              }
+              icon={<IconBadge bg="bg-emerald-100" fg="text-emerald-700" text="✓" />}
             />
             <FeatureCard
               title="Flexible, Self-Paced Learning"
               text="Learn at your own pace while developing the skills employers actively seek in IAM roles."
-              icon={
-                <div className="h-11 w-11 rounded-xl bg-sky-100 flex items-center justify-center text-sky-700 font-bold">
-                  ⏳
-                </div>
-              }
+              icon={<IconBadge bg="bg-sky-100" fg="text-sky-700" text="⏳" />}
             />
             <FeatureCard
               title="Career Advancement Path"
               text="Roles you may pursue: IAM Administrator, SailPoint Administrator, IAM Analyst."
-              icon={
-                <div className="h-11 w-11 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold">
-                  ↑
-                </div>
-              }
+              icon={<IconBadge bg="bg-indigo-100" fg="text-indigo-700" text="↑" />}
             />
           </div>
         </div>
@@ -136,6 +113,12 @@ const Services = () => {
     </section>
   );
 };
+
+const IconBadge = ({ bg, fg, text }: { bg: string; fg: string; text: string }) => (
+  <div className={`h-11 w-11 rounded-xl ${bg} flex items-center justify-center ${fg} font-bold`}>
+    {text}
+  </div>
+);
 
 const FeatureCard = ({
   title,

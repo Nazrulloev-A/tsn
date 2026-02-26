@@ -26,7 +26,7 @@ const Home = () => {
 
   return (
     <>
-      {/* HERO SECTION */}
+      {/* HERO */}
       <section
         id="home"
         className="min-h-screen w-full relative flex items-center justify-center overflow-hidden"
@@ -79,30 +79,10 @@ const Home = () => {
               </button>
 
               <form onSubmit={handleSubmit} className="space-y-4">
-                <input
-                  name="firstName"
-                  placeholder="First Name"
-                  onChange={handleInputChange}
-                  className="w-full p-3 bg-gray-700 text-white"
-                />
-                <input
-                  name="lastName"
-                  placeholder="Last Name"
-                  onChange={handleInputChange}
-                  className="w-full p-3 bg-gray-700 text-white"
-                />
-                <input
-                  name="phone"
-                  placeholder="Phone"
-                  onChange={handleInputChange}
-                  className="w-full p-3 bg-gray-700 text-white"
-                />
-                <input
-                  name="email"
-                  placeholder="Email"
-                  onChange={handleInputChange}
-                  className="w-full p-3 bg-gray-700 text-white"
-                />
+                <input name="firstName" placeholder="First Name" onChange={handleInputChange} className="w-full p-3 bg-gray-700 text-white"/>
+                <input name="lastName" placeholder="Last Name" onChange={handleInputChange} className="w-full p-3 bg-gray-700 text-white"/>
+                <input name="phone" placeholder="Phone" onChange={handleInputChange} className="w-full p-3 bg-gray-700 text-white"/>
+                <input name="email" placeholder="Email" onChange={handleInputChange} className="w-full p-3 bg-gray-700 text-white"/>
 
                 <button className="w-full bg-yellow-600 py-3 rounded-lg">
                   Submit
@@ -113,10 +93,10 @@ const Home = () => {
         )}
       </section>
 
-      {/* ✅ SERVICES SECTION COMPONENT (has id="services" inside it) */}
+      {/* ✅ SERVICES COMPONENT: contains <section id="services">... */}
       <Services />
 
-      {/* OTHER SECTIONS */}
+      {/* Resources */}
       <section
         id="resources"
         className="min-h-screen bg-black text-white flex items-center justify-center"
@@ -124,6 +104,7 @@ const Home = () => {
         <h2 className="text-4xl">Resources</h2>
       </section>
 
+      {/* About */}
       <section
         id="about"
         className="min-h-screen bg-black text-white flex items-center justify-center"
@@ -131,6 +112,7 @@ const Home = () => {
         <h2 className="text-4xl">About Us</h2>
       </section>
 
+      {/* FAQ */}
       <section
         id="faq"
         className="min-h-screen bg-gray-900 text-white flex items-center justify-center"
@@ -138,6 +120,7 @@ const Home = () => {
         <h2 className="text-4xl">FAQ</h2>
       </section>
 
+      {/* Contact */}
       <section
         id="contact"
         className="min-h-screen bg-black text-white flex items-center justify-center"
