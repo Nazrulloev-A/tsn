@@ -1,4 +1,6 @@
 import React, { useMemo, useState } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 type Step = 0 | 1 | 2;
 
@@ -9,6 +11,10 @@ type FormState = {
   email: string;
   details: string;
 };
+
+const nameRegex = /^[\p{L}]+(?:[ \-'\u2019][\p{L}]+)*$/u; // letters only, allows space/hyphen between words
+const emailRegex =
+  /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/; // solid basic email validation
 
 const Contact = () => {
   const topics = useMemo(
@@ -27,24 +33,55 @@ const Contact = () => {
   const [step, setStep] = useState<Step>(0);
   const [submitted, setSubmitted] = useState(false);
 
-  const [form, setForm] = useState<FormState>({
-    topic: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    details: "",
-  });
-
-  const reset = () => {
-    setStep(0);
-    setSubmitted(false);
-    setForm({
+  // ✅ Formik handles validation + state
+  const formik = useFormik<FormState>({
+    initialValues: {
       topic: "",
       firstName: "",
       lastName: "",
       email: "",
       details: "",
-    });
+    },
+    validationSchema: Yup.object({
+      topic: Yup.string().required("Please select one option to continue."),
+      firstName: Yup.string()
+        .trim()
+        .required("First name is required.")
+        .matches(nameRegex, "First name must contain letters only.")
+        .min(2, "First name must be at least 2 characters.")
+        .max(40, "First name must be 40 characters or less."),
+      lastName: Yup.string()
+        .trim()
+        .required("Last name is required.")
+        .matches(nameRegex, "Last name must contain letters only.")
+        .min(2, "Last name must be at least 2 characters.")
+        .max(40, "Last name must be 40 characters or less."),
+      email: Yup.string()
+        .trim()
+        .required("Email is required.")
+        .matches(emailRegex, "Please enter a valid email address.")
+        .email("Please enter a valid email address."),
+      details: Yup.string()
+        .trim()
+        .required("Please add a few details before submitting.")
+        .min(10, "Please provide at least 10 characters."),
+    }),
+    onSubmit: async (values) => {
+      // ✅ TODO (future): Send form data to your backend/database here
+      // Example:
+      // await fetch("/api/contact", { method: "POST", body: JSON.stringify(values) })
+
+      console.log("Contact form submitted:", values);
+      setSubmitted(true);
+    },
+    validateOnBlur: true,
+    validateOnChange: false, // professional UX: validate after blur / Next click
+  });
+
+  const reset = () => {
+    setStep(0);
+    setSubmitted(false);
+    formik.resetForm();
   };
 
   const close = () => {
@@ -52,13 +89,30 @@ const Contact = () => {
     setTimeout(reset, 250);
   };
 
-  const nextDisabled =
-    (step === 0 && !form.topic) ||
-    (step === 1 &&
-      (!form.firstName.trim() || !form.lastName.trim() || !form.email.trim())) ||
-    (step === 2 && !form.details.trim());
+  // ✅ validate current step before moving next
+  const validateStep = async (s: Step) => {
+    // mark only fields for this step as touched so errors show
+    const touchMap: Partial<Record<keyof FormState, boolean>> = {};
 
-  const goNext = () => {
+    if (s === 0) touchMap.topic = true;
+    if (s === 1) {
+      touchMap.firstName = true;
+      touchMap.lastName = true;
+      touchMap.email = true;
+    }
+    if (s === 2) touchMap.details = true;
+
+    formik.setTouched({ ...formik.touched, ...touchMap }, true);
+
+    const errors = await formik.validateForm();
+    if (s === 0) return !errors.topic;
+    if (s === 1) return !errors.firstName && !errors.lastName && !errors.email;
+    return !errors.details;
+  };
+
+  const goNext = async () => {
+    const ok = await validateStep(step);
+    if (!ok) return;
     if (step < 2) setStep((s) => (s + 1) as Step);
   };
 
@@ -66,16 +120,14 @@ const Contact = () => {
     if (step > 0) setStep((s) => (s - 1) as Step);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // ✅ TODO (future): Send form data to your backend/database here
-    // Example:
-    // await fetch("/api/contact", { method: "POST", body: JSON.stringify(form) })
-
-    console.log("Contact form submitted:", form);
-    setSubmitted(true);
-  };
+  // used only for disabling button visuals (actual guard is validateStep)
+  const nextDisabled =
+    (step === 0 && !formik.values.topic) ||
+    (step === 1 &&
+      (!formik.values.firstName.trim() ||
+        !formik.values.lastName.trim() ||
+        !formik.values.email.trim())) ||
+    (step === 2 && !formik.values.details.trim());
 
   return (
     <section id="contact" className="relative w-full py-16 md:py-20">
@@ -93,14 +145,13 @@ const Contact = () => {
             team, whether you’re a learner, alumni, partner, press, or someone looking to learn more.
           </p>
 
-         <button 
-            onClick={() => setOpen(true)} 
+          <button
+            onClick={() => setOpen(true)}
             className="mt-6 inline-flex items-center gap-3 rounded-full bg-yellow-500 px-8 py-4 text-white font-semibold shadow-lg shadow-yellow-900/20 hover:bg-yellow-600 hover:shadow-xl hover:shadow-yellow-900/25 transition active:scale-[0.99]"
-          > 
-            Get in touch 
-            <span className="text-xl leading-none">→</span> 
+          >
+            Get in touch
+            <span className="text-xl leading-none">→</span>
           </button>
-
         </div>
       </div>
 
@@ -108,10 +159,7 @@ const Contact = () => {
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           {/* backdrop */}
-          <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"
-            onClick={close}
-          />
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" onClick={close} />
 
           {/* modal card */}
           <div className="relative w-full max-w-5xl rounded-2xl bg-sky-50 shadow-2xl border border-slate-200 overflow-hidden">
@@ -136,7 +184,7 @@ const Contact = () => {
             </div>
 
             {/* content */}
-            <form onSubmit={handleSubmit} className="px-6 md:px-8 pb-7 md:pb-8 pt-6">
+            <form onSubmit={formik.handleSubmit} className="px-6 md:px-8 pb-7 md:pb-8 pt-6">
               {!submitted ? (
                 <>
                   {step === 0 && (
@@ -158,17 +206,19 @@ const Contact = () => {
                               type="radio"
                               name="topic"
                               value={t}
-                              checked={form.topic === t}
-                              onChange={(e) =>
-                                setForm((prev) => ({ ...prev, topic: e.target.value }))
-                              }
+                              checked={formik.values.topic === t}
+                              onChange={(e) => formik.setFieldValue("topic", e.target.value)}
                               className="h-4 w-4 accent-sky-700"
-                              required
                             />
                             <span className="text-lg">{t}</span>
                           </label>
                         ))}
                       </div>
+
+                      {/* error */}
+                      {formik.touched.topic && formik.errors.topic && (
+                        <p className="mt-4 text-sm text-red-600">{formik.errors.topic}</p>
+                      )}
                     </div>
                   )}
 
@@ -185,53 +235,92 @@ const Contact = () => {
 
                         <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div>
+                            {/* ✅ First Name label */}
+                            <label className="block text-sm font-medium text-slate-700">
+                              First Name <span className="text-red-600">*</span>
+                            </label>
+
                             <input
-                              value={form.firstName}
-                              onChange={(e) =>
-                                setForm((prev) => ({ ...prev, firstName: e.target.value }))
-                              }
-                              className="w-full rounded-md border border-slate-300 bg-white px-4 py-3
-                                         focus:outline-none focus:ring-2 focus:ring-sky-500"
+                              name="firstName"
+                              value={formik.values.firstName}
+                              onChange={formik.handleChange}
+                              onBlur={formik.handleBlur}
+                              className={`mt-2 w-full rounded-md border bg-white px-4 py-3
+                                focus:outline-none focus:ring-2 focus:ring-sky-500
+                                ${
+                                  formik.touched.firstName && formik.errors.firstName
+                                    ? "border-red-400"
+                                    : "border-slate-300"
+                                }`}
                               placeholder=""
-                              required
+                              inputMode="text"
+                              autoComplete="given-name"
                             />
-                            <div className="mt-2 text-slate-500">First</div>
-                            <div className="mt-1 text-slate-500 text-sm">
+
+                            {formik.touched.firstName && formik.errors.firstName && (
+                              <p className="mt-2 text-sm text-red-600">{formik.errors.firstName}</p>
+                            )}
+
+                            <div className="mt-2 text-slate-500 text-sm">
                               To establish communication with the appropriate person
                             </div>
                           </div>
 
                           <div>
+                            {/* ✅ Last Name label */}
+                            <label className="block text-sm font-medium text-slate-700">
+                              Last Name <span className="text-red-600">*</span>
+                            </label>
+
                             <input
-                              value={form.lastName}
-                              onChange={(e) =>
-                                setForm((prev) => ({ ...prev, lastName: e.target.value }))
-                              }
-                              className="w-full rounded-md border border-slate-300 bg-white px-4 py-3
-                                         focus:outline-none focus:ring-2 focus:ring-sky-500"
+                              name="lastName"
+                              value={formik.values.lastName}
+                              onChange={formik.handleChange}
+                              onBlur={formik.handleBlur}
+                              className={`mt-2 w-full rounded-md border bg-white px-4 py-3
+                                focus:outline-none focus:ring-2 focus:ring-sky-500
+                                ${
+                                  formik.touched.lastName && formik.errors.lastName
+                                    ? "border-red-400"
+                                    : "border-slate-300"
+                                }`}
                               placeholder=""
-                              required
+                              inputMode="text"
+                              autoComplete="family-name"
                             />
-                            <div className="mt-2 text-slate-500">Last</div>
+
+                            {formik.touched.lastName && formik.errors.lastName && (
+                              <p className="mt-2 text-sm text-red-600">{formik.errors.lastName}</p>
+                            )}
                           </div>
                         </div>
                       </div>
 
                       <div className="mt-8 max-w-2xl">
+                        {/* ✅ Email label */}
                         <label className="block text-slate-900 font-semibold">
                           Email <span className="text-red-600">*</span>
                         </label>
 
                         <input
                           type="email"
-                          value={form.email}
-                          onChange={(e) =>
-                            setForm((prev) => ({ ...prev, email: e.target.value }))
-                          }
-                          className="mt-3 w-full rounded-md border border-slate-300 bg-white px-4 py-3
-                                     focus:outline-none focus:ring-2 focus:ring-sky-500"
-                          required
+                          name="email"
+                          value={formik.values.email}
+                          onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
+                          className={`mt-3 w-full rounded-md border bg-white px-4 py-3
+                            focus:outline-none focus:ring-2 focus:ring-sky-500
+                            ${
+                              formik.touched.email && formik.errors.email
+                                ? "border-red-400"
+                                : "border-slate-300"
+                            }`}
+                          autoComplete="email"
                         />
+
+                        {formik.touched.email && formik.errors.email && (
+                          <p className="mt-2 text-sm text-red-600">{formik.errors.email}</p>
+                        )}
 
                         <div className="mt-2 text-slate-500 text-sm">
                           To establish communication with the appropriate person
@@ -252,14 +341,22 @@ const Contact = () => {
                       </label>
 
                       <textarea
-                        value={form.details}
-                        onChange={(e) =>
-                          setForm((prev) => ({ ...prev, details: e.target.value }))
-                        }
-                        className="mt-3 w-full min-h-[160px] rounded-md border border-slate-300 bg-white px-4 py-3
-                                   focus:outline-none focus:ring-2 focus:ring-sky-500"
-                        required
+                        name="details"
+                        value={formik.values.details}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        className={`mt-3 w-full min-h-[160px] rounded-md border bg-white px-4 py-3
+                          focus:outline-none focus:ring-2 focus:ring-sky-500
+                          ${
+                            formik.touched.details && formik.errors.details
+                              ? "border-red-400"
+                              : "border-slate-300"
+                          }`}
                       />
+
+                      {formik.touched.details && formik.errors.details && (
+                        <p className="mt-2 text-sm text-red-600">{formik.errors.details}</p>
+                      )}
                     </div>
                   )}
 
@@ -273,34 +370,33 @@ const Contact = () => {
                       >
                         Previous
                       </button>
-
                     )}
 
                     {step < 2 ? (
-                    <button 
-                      type="button" 
-                      onClick={goNext} 
-                      disabled={nextDisabled} 
-                      className={`rounded-md px-10 py-3 text-white font-semibold transition ${
-                        nextDisabled 
-                          ? "bg-yellow-300 cursor-not-allowed" // Disabled yellow
-                          : "bg-yellow-500 hover:bg-yellow-600" // Active/Hover yellow
-                      }`}
-                    > 
-                      Next 
-                    </button>
-
-                    ) : (
-                      <button 
-                        type="submit" 
-                        disabled={nextDisabled} 
-                        className={`rounded-md px-10 py-3
-                           text-white font-semibold transition ${nextDisabled ?
-                          'bg-yellow-300 cursor-not-allowed' : 'bg-yellow-500 hover:bg-yellow-600' }`}
-                      > 
-                        Submit 
+                      <button
+                        type="button"
+                        onClick={goNext}
+                        disabled={nextDisabled}
+                        className={`rounded-md px-10 py-3 text-white font-semibold transition ${
+                          nextDisabled
+                            ? "bg-yellow-300 cursor-not-allowed"
+                            : "bg-yellow-500 hover:bg-yellow-600"
+                        }`}
+                      >
+                        Next
                       </button>
-
+                    ) : (
+                      <button
+                        type="submit"
+                        disabled={nextDisabled}
+                        className={`rounded-md px-10 py-3 text-white font-semibold transition ${
+                          nextDisabled
+                            ? "bg-yellow-300 cursor-not-allowed"
+                            : "bg-yellow-500 hover:bg-yellow-600"
+                        }`}
+                      >
+                        Submit
+                      </button>
                     )}
                   </div>
                 </>
@@ -341,7 +437,6 @@ function Stepper({ step }: { step: Step }) {
           const active = step === it.idx;
           return (
             <div key={it.label} className="relative">
-              {/* little triangle indicator */}
               {active && (
                 <div className="absolute -top-5 left-1/2 -translate-x-1/2">
                   <div className="h-0 w-0 border-l-[10px] border-r-[10px] border-b-[10px] border-l-transparent border-r-transparent border-b-sky-700" />

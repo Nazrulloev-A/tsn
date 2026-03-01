@@ -100,12 +100,12 @@ const Home = () => {
       <Services />
 
       {/* Resources */}
-      <section
+      {/* <section
         id="resources"
         className="min-h-screen bg-black text-white flex items-center justify-center"
       >
         <h2 className="text-4xl">Resources</h2>
-      </section>
+      </section> */}
 
       {/* About */}
     <About/>

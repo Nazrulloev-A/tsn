@@ -8,7 +8,7 @@ type SectionKey = "home" | "services" | "resources" | "about" | "faq" | "contact
 const NAV_ITEMS: Array<{ key: SectionKey; label: string }> = [
   { key: "home", label: "HOME" },
   { key: "services", label: "OUR SERVICES" },
-  { key: "resources", label: "RESOURCES" },
+  // { key: "resources", label: "RESOURCES" },
   { key: "about", label: "ABOUT US" },
   { key: "faq", label: "FAQ" },
   { key: "contact", label: "CONTACT US" },
