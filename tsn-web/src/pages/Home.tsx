@@ -3,6 +3,7 @@ import Services from "../pages/Services";
 import { useState } from "react";
 import Faq from "./FAQ";
 import Contact from "./Contact";
+import About from "./About";
 
 const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -107,12 +108,7 @@ const Home = () => {
       </section>
 
       {/* About */}
-      <section
-        id="about"
-        className="min-h-screen bg-black text-white flex items-center justify-center"
-      >
-        <h2 className="text-4xl">About Us</h2>
-      </section>
+    <About/>
 
       {/* FAQ */}
       <Faq />

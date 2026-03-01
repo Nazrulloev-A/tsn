@@ -93,14 +93,14 @@ const Contact = () => {
             team, whether you’re a learner, alumni, partner, press, or someone looking to learn more.
           </p>
 
-          <button
-            onClick={() => setOpen(true)}
-            className="mt-6 inline-flex items-center gap-3 rounded-full bg-slate-900 px-8 py-4 text-white font-semibold
-                       shadow-lg shadow-slate-900/20 hover:shadow-xl hover:shadow-slate-900/25
-                       transition active:scale-[0.99]"
-          >
-            Get in touch <span className="text-xl leading-none">→</span>
+         <button 
+            onClick={() => setOpen(true)} 
+            className="mt-6 inline-flex items-center gap-3 rounded-full bg-yellow-500 px-8 py-4 text-white font-semibold shadow-lg shadow-yellow-900/20 hover:bg-yellow-600 hover:shadow-xl hover:shadow-yellow-900/25 transition active:scale-[0.99]"
+          > 
+            Get in touch 
+            <span className="text-xl leading-none">→</span> 
           </button>
+
         </div>
       </div>
 
@@ -269,31 +269,38 @@ const Contact = () => {
                       <button
                         type="button"
                         onClick={goPrev}
-                        className="rounded-md bg-sky-700 px-7 py-3 text-white font-semibold hover:bg-sky-800 transition"
+                        className="rounded-md bg-yellow-500 px-7 py-3 text-black font-semibold hover:bg-yellow-600 transition"
                       >
                         Previous
                       </button>
+
                     )}
 
                     {step < 2 ? (
-                      <button
-                        type="button"
-                        onClick={goNext}
-                        disabled={nextDisabled}
-                        className={`rounded-md px-10 py-3 text-white font-semibold transition
-                          ${nextDisabled ? "bg-sky-300 cursor-not-allowed" : "bg-sky-700 hover:bg-sky-800"}`}
-                      >
-                        Next
-                      </button>
+                    <button 
+                      type="button" 
+                      onClick={goNext} 
+                      disabled={nextDisabled} 
+                      className={`rounded-md px-10 py-3 text-white font-semibold transition ${
+                        nextDisabled 
+                          ? "bg-yellow-300 cursor-not-allowed" // Disabled yellow
+                          : "bg-yellow-500 hover:bg-yellow-600" // Active/Hover yellow
+                      }`}
+                    > 
+                      Next 
+                    </button>
+
                     ) : (
-                      <button
-                        type="submit"
-                        disabled={nextDisabled}
-                        className={`rounded-md px-10 py-3 text-white font-semibold transition
-                          ${nextDisabled ? "bg-sky-300 cursor-not-allowed" : "bg-sky-700 hover:bg-sky-800"}`}
-                      >
-                        Submit
+                      <button 
+                        type="submit" 
+                        disabled={nextDisabled} 
+                        className={`rounded-md px-10 py-3
+                           text-white font-semibold transition ${nextDisabled ?
+                          'bg-yellow-300 cursor-not-allowed' : 'bg-yellow-500 hover:bg-yellow-600' }`}
+                      > 
+                        Submit 
                       </button>
+
                     )}
                   </div>
                 </>
@@ -322,7 +329,7 @@ function Stepper({ step }: { step: Step }) {
 
       {/* active line */}
       <div
-        className="h-[4px] bg-sky-700 absolute left-0 top-[-1px] transition-all duration-300"
+        className="h-[4px] bg-yellow-400 left-0 top-[-1px] transition-all duration-300"
         style={{
           width: step === 0 ? "33.33%" : step === 1 ? "66.66%" : "100%",
         }}

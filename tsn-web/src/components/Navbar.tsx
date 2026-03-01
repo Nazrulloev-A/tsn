@@ -1,6 +1,7 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
+import HomeLogo from "../assets/tsn-logo.png";
 
 type SectionKey = "home" | "services" | "resources" | "about" | "faq" | "contact";
 
@@ -112,8 +113,10 @@ const Navbar: React.FC = () => {
     mobileCloseTimer.current = window.setTimeout(() => setMobileOpen(false), 150);
   };
 
+  // ✅ CHANGE: Darker on scroll so white links are visible even on white pages
+  // Still transparent enough to look premium.
   const navBgClass = scrolled
-    ? "bg-black/20 backdrop-blur-md"
+    ? "bg-black/45 backdrop-blur-md"
     : "bg-transparent";
 
   return (
@@ -124,14 +127,19 @@ const Navbar: React.FC = () => {
           onClick={() => scrollToSection("home")}
           className="text-white text-xl md:text-2xl font-semibold tracking-wide"
         >
-          TSN Web
+          <img
+            src={HomeLogo}
+            alt="TSN Logo"
+            className="h-10 w-auto object-contain"
+          />
         </button>
 
         {/* Desktop links */}
         <div className="hidden md:block relative">
           <div
             ref={containerRef}
-            className="relative flex items-center gap-10 text-sm uppercase tracking-wider text-white/90"
+            // ✅ CHANGE: keep as white, but make inactive a bit stronger for readability
+            className="relative flex items-center gap-10 text-sm uppercase tracking-wider text-white"
           >
             {NAV_ITEMS.map((item) => (
               <button
@@ -140,9 +148,10 @@ const Navbar: React.FC = () => {
                   itemRefs.current[item.key] = el;
                 }}
                 onClick={() => scrollToSection(item.key)}
-                className={`relative transition-colors duration-200 hover:text-white ${
-                  active === item.key ? "text-white" : "text-white/75"
-                }`}
+                // ✅ CHANGE: stronger inactive + stronger hover
+                className={`relative transition-colors duration-200 ${
+                  active === item.key ? "text-white" : "text-white/85"
+                } hover:text-white`}
               >
                 {item.label}
               </button>
