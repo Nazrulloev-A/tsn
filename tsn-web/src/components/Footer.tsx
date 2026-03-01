@@ -40,9 +40,9 @@ const Footer: React.FC = () => {
             <ul className="mt-5 space-y-3 text-white/80">
               <li>IAM SailPoint</li>
               <li>Cybersecurity</li>
-              <li>QA Automation</li>
+              {/* <li>QA Automation</li>
               <li>Cloud Engineering</li>
-              <li>DevOps Training</li>
+              <li>DevOps Training</li> */}
             </ul>
           </div>
 

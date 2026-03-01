@@ -261,9 +261,7 @@ const Contact = () => {
                               <p className="mt-2 text-sm text-red-600">{formik.errors.firstName}</p>
                             )}
 
-                            <div className="mt-2 text-slate-500 text-sm">
-                              To establish communication with the appropriate person
-                            </div>
+                           
                           </div>
 
                           <div>
@@ -321,10 +319,6 @@ const Contact = () => {
                         {formik.touched.email && formik.errors.email && (
                           <p className="mt-2 text-sm text-red-600">{formik.errors.email}</p>
                         )}
-
-                        <div className="mt-2 text-slate-500 text-sm">
-                          To establish communication with the appropriate person
-                        </div>
                       </div>
                     </div>
                   )}
