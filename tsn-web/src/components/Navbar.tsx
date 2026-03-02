@@ -3,6 +3,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import HomeLogo from "../assets/tsn-logo.png";
 
+
 type SectionKey = "home" | "services" | "resources" | "about" | "faq" | "contact";
 
 const NAV_ITEMS: Array<{ key: SectionKey; label: string }> = [
@@ -16,6 +17,14 @@ const NAV_ITEMS: Array<{ key: SectionKey; label: string }> = [
 
 const NAV_OFFSET = 96; // fixed navbar height offset (tune if needed)
 
+// ✅ NEW: dropdown items for "OUR SERVICES"
+const SERVICES_DROPDOWN = [
+  "Job Placement-Driven Model",
+  "Flexible, Self-Paced Learning",
+  "Career Advancement Path",
+ 
+];
+
 const Navbar: React.FC = () => {
   const [active, setActive] = useState<SectionKey>("home");
   const [scrolled, setScrolled] = useState(false);
@@ -28,6 +37,10 @@ const Navbar: React.FC = () => {
   // mobile menu
   const [mobileOpen, setMobileOpen] = useState(false);
   const mobileCloseTimer = useRef<number | null>(null);
+
+  // ✅ NEW: services dropdown state (desktop)
+  const [servicesOpen, setServicesOpen] = useState(false);
+  const servicesCloseTimer = useRef<number | null>(null);
 
   // blur background on scroll
   useEffect(() => {
@@ -74,6 +87,9 @@ const Navbar: React.FC = () => {
     const top = el.getBoundingClientRect().top + window.scrollY - NAV_OFFSET;
     window.scrollTo({ top, behavior: "smooth" });
     setMobileOpen(false);
+
+    // ✅ NEW: close dropdown after click
+    setServicesOpen(false);
   };
 
   // underline positioning
@@ -113,11 +129,19 @@ const Navbar: React.FC = () => {
     mobileCloseTimer.current = window.setTimeout(() => setMobileOpen(false), 150);
   };
 
+  // ✅ NEW: hover open/close for OUR SERVICES dropdown
+  const openServices = () => {
+    if (servicesCloseTimer.current) window.clearTimeout(servicesCloseTimer.current);
+    setServicesOpen(true);
+  };
+  const closeServices = () => {
+    if (servicesCloseTimer.current) window.clearTimeout(servicesCloseTimer.current);
+    servicesCloseTimer.current = window.setTimeout(() => setServicesOpen(false), 140);
+  };
+
   // ✅ CHANGE: Darker on scroll so white links are visible even on white pages
   // Still transparent enough to look premium.
-  const navBgClass = scrolled
-    ? "bg-black/45 backdrop-blur-md"
-    : "bg-transparent";
+  const navBgClass = scrolled ? "bg-black/45 backdrop-blur-md" : "bg-transparent";
 
   return (
     <nav className={`fixed top-0 left-0 w-full z-50 ${navBgClass} transition-all duration-300`}>
@@ -127,11 +151,7 @@ const Navbar: React.FC = () => {
           onClick={() => scrollToSection("home")}
           className="text-white text-xl md:text-2xl font-semibold tracking-wide"
         >
-          <img
-            src={HomeLogo}
-            alt="TSN Logo"
-            className="h-10 w-auto object-contain"
-          />
+          <img src={HomeLogo} alt="TSN Logo" className="h-10 w-auto object-contain" />
         </button>
 
         {/* Desktop links */}
@@ -141,21 +161,80 @@ const Navbar: React.FC = () => {
             // ✅ CHANGE: keep as white, but make inactive a bit stronger for readability
             className="relative flex items-center gap-10 text-sm uppercase tracking-wider text-white"
           >
-            {NAV_ITEMS.map((item) => (
-              <button
-                key={item.key}
-                ref={(el) => {
-                  itemRefs.current[item.key] = el;
-                }}
-                onClick={() => scrollToSection(item.key)}
-                // ✅ CHANGE: stronger inactive + stronger hover
-                className={`relative transition-colors duration-200 ${
-                  active === item.key ? "text-white" : "text-white/85"
-                } hover:text-white`}
-              >
-                {item.label}
-              </button>
-            ))}
+            {NAV_ITEMS.map((item) => {
+              // ✅ NEW: wrap only "services" with dropdown container (no other changes)
+              if (item.key === "services") {
+                return (
+                  <div
+                    key={item.key}
+                    className="relative"
+                    onMouseEnter={openServices}
+                    onMouseLeave={closeServices}
+                  >
+                    <button
+                      ref={(el) => {
+                        itemRefs.current[item.key] = el;
+                      }}
+                      onClick={() => scrollToSection(item.key)}
+                      // ✅ SAME CLASS as your existing button
+                      className={`relative transition-colors duration-200 ${
+                        active === item.key ? "text-white" : "text-white/85"
+                      } hover:text-white`}
+                      aria-haspopup="menu"
+                      aria-expanded={servicesOpen}
+                    >
+                      {item.label}
+                    </button>
+
+                    {/* ✅ NEW: Dropdown UI */}
+                    <div
+                      className={[
+                        "absolute left-1/2 -translate-x-1/2 top-[42px] w-72",
+                        "rounded-xl border border-white/10 bg-black/70 backdrop-blur-md shadow-2xl overflow-hidden",
+                        "transition-all duration-150 origin-top",
+                        servicesOpen
+                          ? "opacity-100 scale-100"
+                          : "opacity-0 scale-95 pointer-events-none",
+                      ].join(" ")}
+                      onMouseEnter={openServices}
+                      onMouseLeave={closeServices}
+                      role="menu"
+                    >
+                      <div className="py-2">
+                       {SERVICES_DROPDOWN.map((label) => (
+                        <button
+                          key={label}
+                          type="button"
+                          onClick={() => scrollToSection("services")}
+                          className="w-full text-left px-5 py-3 text-sm tracking-wide text-white/90 hover:bg-white/10 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-yellow-400 after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300"
+                          role="menuitem"
+                        >
+                          {label}
+                        </button>
+                      ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              // ✅ your normal buttons unchanged
+              return (
+                <button
+                  key={item.key}
+                  ref={(el) => {
+                    itemRefs.current[item.key] = el;
+                  }}
+                  onClick={() => scrollToSection(item.key)}
+                  // ✅ CHANGE: stronger inactive + stronger hover
+                  className={`relative transition-colors duration-200 ${
+                    active === item.key ? "text-white" : "text-white/85"
+                  } hover:text-white`}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
 
             {/* ✅ Yellow sliding underline + glow */}
             <span
@@ -171,11 +250,7 @@ const Navbar: React.FC = () => {
         </div>
 
         {/* Mobile hamburger */}
-        <div
-          className="md:hidden relative"
-          onMouseEnter={openMobile}
-          onMouseLeave={closeMobile}
-        >
+        <div className="md:hidden relative" onMouseEnter={openMobile} onMouseLeave={closeMobile}>
           <button
             onClick={() => setMobileOpen((v) => !v)}
             className="text-white p-2 rounded hover:bg-white/10 transition"
