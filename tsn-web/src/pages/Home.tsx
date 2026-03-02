@@ -169,12 +169,18 @@ const Home: React.FC = () => {
 
   return (
     <>
-      {/* HERO SECTION */}
+      {/* HERO */}
       <section
-  id="home"
-  className="min-h-screen w-full relative flex items-center justify-center overflow-hidden -mt-[96px] pt-[96px]"
->
-        <video autoPlay loop muted playsInline className="absolute top-0 left-0 w-full h-full object-cover">
+        id="home"
+        className="min-h-screen w-full relative flex items-center justify-center overflow-hidden"
+      >
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute top-0 left-0 w-full h-full object-cover"
+        >
           <source src={backgroundVideo} type="video/mp4" />
         </video>
 
