@@ -170,10 +170,10 @@ const Home: React.FC = () => {
   return (
     <>
       {/* HERO */}
-      <section
-        id="home"
-        className="min-h-screen w-full relative flex items-center justify-center overflow-hidden"
-      >
+     <section
+  id="home"
+  className="min-h-screen w-full relative flex items-center justify-center overflow-hidden -mt-[96px] pt-[96px]"
+>
         <video
           autoPlay
           loop
