@@ -8,6 +8,7 @@ type FormState = {
   topic: string;
   firstName: string;
   lastName: string;
+  phone: string;
   email: string;
   details: string;
 };
@@ -15,6 +16,7 @@ type FormState = {
 const nameRegex = /^[\p{L}]+(?:[ \-'\u2019][\p{L}]+)*$/u; // letters only, allows space/hyphen between words
 const emailRegex =
   /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/; // solid basic email validation
+const phoneRegex = /^[\d\s\-+()]{10,}(?:\s*(?:ext|extension|x)\s*\d+)?$/i; // supports extensions
 
 const Contact = () => {
   const topics = useMemo(
@@ -32,6 +34,10 @@ const Contact = () => {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<Step>(0);
   const [submitted, setSubmitted] = useState(false);
+  
+  // ✅ New states for API submission
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   // ✅ Formik handles validation + state
   const formik = useFormik<FormState>({
@@ -39,6 +45,7 @@ const Contact = () => {
       topic: "",
       firstName: "",
       lastName: "",
+      phone: "",
       email: "",
       details: "",
     },
@@ -56,6 +63,10 @@ const Contact = () => {
         .matches(nameRegex, "Last name must contain letters only.")
         .min(2, "Last name must be at least 2 characters.")
         .max(40, "Last name must be 40 characters or less."),
+      phone: Yup.string()
+        .trim()
+        .required("Phone number is required.")
+        .matches(phoneRegex, "Please enter a valid phone number (e.g., 123-456-7890 ext 123)"),
       email: Yup.string()
         .trim()
         .required("Email is required.")
@@ -67,12 +78,39 @@ const Contact = () => {
         .min(10, "Please provide at least 10 characters."),
     }),
     onSubmit: async (values) => {
-      // ✅ TODO (future): Send form data to your backend/database here
-      // Example:
-      // await fetch("/api/contact", { method: "POST", body: JSON.stringify(values) })
+      setSubmitError("");
+      setIsSubmitting(true);
 
-      console.log("Contact form submitted:", values);
-      setSubmitted(true);
+      try {
+        const response = await fetch("http://localhost:5000/api/contact", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            phone: values.phone || "",
+            details: values.details || "",
+            topic: values.topic || "",
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Something went wrong.");
+        }
+
+        console.log("Server response:", data);
+        setSubmitted(true);
+      } catch (error) {
+        console.error("Submit error:", error);
+        setSubmitError("Unable to send your request right now. Please try again.");
+      } finally {
+        setIsSubmitting(false);
+      }
     },
     validateOnBlur: true,
     validateOnChange: false, // professional UX: validate after blur / Next click
@@ -81,6 +119,7 @@ const Contact = () => {
   const reset = () => {
     setStep(0);
     setSubmitted(false);
+    setSubmitError("");
     formik.resetForm();
   };
 
@@ -98,6 +137,7 @@ const Contact = () => {
     if (s === 1) {
       touchMap.firstName = true;
       touchMap.lastName = true;
+      touchMap.phone = true;
       touchMap.email = true;
     }
     if (s === 2) touchMap.details = true;
@@ -106,7 +146,7 @@ const Contact = () => {
 
     const errors = await formik.validateForm();
     if (s === 0) return !errors.topic;
-    if (s === 1) return !errors.firstName && !errors.lastName && !errors.email;
+    if (s === 1) return !errors.firstName && !errors.lastName && !errors.phone && !errors.email;
     return !errors.details;
   };
 
@@ -126,6 +166,7 @@ const Contact = () => {
     (step === 1 &&
       (!formik.values.firstName.trim() ||
         !formik.values.lastName.trim() ||
+        !formik.values.phone.trim() ||
         !formik.values.email.trim())) ||
     (step === 2 && !formik.values.details.trim());
 
@@ -142,7 +183,7 @@ const Contact = () => {
         <div className="rounded-3xl border border-slate-200/70 bg-white/80 backdrop-blur-sm p-8 md:p-10 shadow-[0_10px_35px_rgba(15,23,42,0.06)]">
           <p className="text-slate-700 text-lg leading-relaxed max-w-3xl">
             Thank you for your interest in TSN! Use the options below to connect with our
-            team, whether you’re a learner, alumni, partner, press, or someone looking to learn more.
+            team, whether you're a learner, alumni, partner, press, or someone looking to learn more.
           </p>
 
           <button
@@ -166,7 +207,7 @@ const Contact = () => {
             {/* header */}
             <div className="flex items-start justify-between px-6 md:px-8 pt-6 md:pt-7">
               <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900">
-                Let’s Get You Connected
+                Let's Get You Connected
               </h2>
 
               <button
@@ -195,7 +236,7 @@ const Contact = () => {
 
                       <p className="mt-3 font-semibold text-slate-800">
                         Thanks for your interest in TSN. Choose from the options below and
-                        we’ll connect you with the right person:{" "}
+                        we'll connect you with the right person:{" "}
                         <span className="text-red-600">*</span>
                       </p>
 
@@ -235,7 +276,6 @@ const Contact = () => {
 
                         <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div>
-                            {/* ✅ First Name label */}
                             <label className="block text-sm font-medium text-slate-700">
                               First Name <span className="text-red-600">*</span>
                             </label>
@@ -260,12 +300,9 @@ const Contact = () => {
                             {formik.touched.firstName && formik.errors.firstName && (
                               <p className="mt-2 text-sm text-red-600">{formik.errors.firstName}</p>
                             )}
-
-                           
                           </div>
 
                           <div>
-                            {/* ✅ Last Name label */}
                             <label className="block text-sm font-medium text-slate-700">
                               Last Name <span className="text-red-600">*</span>
                             </label>
@@ -294,31 +331,62 @@ const Contact = () => {
                         </div>
                       </div>
 
-                      <div className="mt-8 max-w-2xl">
-                        {/* ✅ Email label */}
-                        <label className="block text-slate-900 font-semibold">
-                          Email <span className="text-red-600">*</span>
-                        </label>
+                      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700">
+                            Email <span className="text-red-600">*</span>
+                          </label>
 
-                        <input
-                          type="email"
-                          name="email"
-                          value={formik.values.email}
-                          onChange={formik.handleChange}
-                          onBlur={formik.handleBlur}
-                          className={`mt-3 w-full rounded-md border bg-white px-4 py-3
-                            focus:outline-none focus:ring-2 focus:ring-sky-500
-                            ${
-                              formik.touched.email && formik.errors.email
-                                ? "border-red-400"
-                                : "border-slate-300"
-                            }`}
-                          autoComplete="email"
-                        />
+                          <input
+                            type="email"
+                            name="email"
+                            value={formik.values.email}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            className={`mt-2 w-full rounded-md border bg-white px-4 py-3
+                              focus:outline-none focus:ring-2 focus:ring-sky-500
+                              ${
+                                formik.touched.email && formik.errors.email
+                                  ? "border-red-400"
+                                  : "border-slate-300"
+                              }`}
+                            autoComplete="email"
+                          />
 
-                        {formik.touched.email && formik.errors.email && (
-                          <p className="mt-2 text-sm text-red-600">{formik.errors.email}</p>
-                        )}
+                          {formik.touched.email && formik.errors.email && (
+                            <p className="mt-2 text-sm text-red-600">{formik.errors.email}</p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700">
+                            Phone <span className="text-red-600">*</span>
+                          </label>
+
+                          <input
+                            name="phone"
+                            value={formik.values.phone}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            className={`mt-2 w-full rounded-md border bg-white px-4 py-3
+                              focus:outline-none focus:ring-2 focus:ring-sky-500
+                              ${
+                                formik.touched.phone && formik.errors.phone
+                                  ? "border-red-400"
+                                  : "border-slate-300"
+                              }`}
+                            placeholder="123-456-7890 ext 123"
+                            inputMode="tel"
+                            autoComplete="tel"
+                          />
+
+                          {formik.touched.phone && formik.errors.phone && (
+                            <p className="mt-2 text-sm text-red-600">{formik.errors.phone}</p>
+                          )}
+                          <p className="mt-1 text-xs text-slate-500">
+                            Include extension if needed (e.g., ext 123, x 456)
+                          </p>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -354,13 +422,23 @@ const Contact = () => {
                     </div>
                   )}
 
+                  {/* Error message display */}
+                  {submitError && (
+                    <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-md">
+                      <p className="text-sm text-red-600 font-medium">
+                        {submitError}
+                      </p>
+                    </div>
+                  )}
+
                   {/* footer buttons */}
                   <div className="mt-10 flex items-center gap-4">
                     {step > 0 && (
                       <button
                         type="button"
                         onClick={goPrev}
-                        className="rounded-md bg-yellow-500 px-7 py-3 text-black font-semibold hover:bg-yellow-600 transition"
+                        disabled={isSubmitting}
+                        className="rounded-md bg-yellow-500 px-7 py-3 text-black font-semibold hover:bg-yellow-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Previous
                       </button>
@@ -370,9 +448,9 @@ const Contact = () => {
                       <button
                         type="button"
                         onClick={goNext}
-                        disabled={nextDisabled}
+                        disabled={nextDisabled || isSubmitting}
                         className={`rounded-md px-10 py-3 text-white font-semibold transition ${
-                          nextDisabled
+                          nextDisabled || isSubmitting
                             ? "bg-yellow-300 cursor-not-allowed"
                             : "bg-yellow-500 hover:bg-yellow-600"
                         }`}
@@ -382,14 +460,14 @@ const Contact = () => {
                     ) : (
                       <button
                         type="submit"
-                        disabled={nextDisabled}
+                        disabled={nextDisabled || isSubmitting}
                         className={`rounded-md px-10 py-3 text-white font-semibold transition ${
-                          nextDisabled
+                          nextDisabled || isSubmitting
                             ? "bg-yellow-300 cursor-not-allowed"
                             : "bg-yellow-500 hover:bg-yellow-600"
                         }`}
                       >
-                        Submit
+                        {isSubmitting ? "Submitting..." : "Submit"}
                       </button>
                     )}
                   </div>
@@ -419,7 +497,7 @@ function Stepper({ step }: { step: Step }) {
 
       {/* active line */}
       <div
-        className="h-[4px] bg-yellow-400 left-0 top-[-1px] transition-all duration-300"
+        className="absolute h-[4px] bg-yellow-400 left-0 top-[-1px] transition-all duration-300"
         style={{
           width: step === 0 ? "33.33%" : step === 1 ? "66.66%" : "100%",
         }}
@@ -457,10 +535,6 @@ function ThankYou() {
       <p className="mt-4 text-slate-700 leading-relaxed">
         A member of our team will reach out soon. If you have any immediate questions,
         feel free to visit our Help Center for more information.
-      </p>
-
-      <p className="mt-4 text-sm text-slate-500">
-        (This is a demo submission message. We’ll connect this form to a database/API once finalized.)
       </p>
     </div>
   );

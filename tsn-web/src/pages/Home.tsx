@@ -254,18 +254,41 @@ const Home: React.FC = () => {
                   validateOnBlur
                   validateOnChange
                   onSubmit={async (values, actions) => {
-                    // ✅ TODO (future): send to backend/db
-                    // await fetch("/api/leads", { method: "POST", body: JSON.stringify(values) })
-                    console.log("Lead submitted:", values);
+  try {
+    const response = await fetch("http://localhost:5000/api/contact", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        topic: "Get Started - Home Page",
+        firstName: values.firstName,
+        lastName: values.lastName,
+        phone: values.phone,
+        email: values.email,
+        details: "Submitted from Home page Get Started modal",
+      }),
+    });
 
-                    actions.setSubmitting(false);
-                    actions.resetForm();
+    const data = await response.json();
 
-                    closeModal();
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to submit form.");
+    }
 
-                    // ✅ ADDED: show toast after submit
-                    setToastOpen(true);
-                  }}
+    console.log("Lead submitted:", values);
+    console.log("Server response:", data);
+
+    actions.resetForm();
+    closeModal();
+    setToastOpen(true);
+  } catch (error) {
+    console.error("Home form submit error:", error);
+    alert("Unable to submit right now. Please try again.");
+  } finally {
+    actions.setSubmitting(false);
+  }
+}}
                 >
                   {({
                     values,
