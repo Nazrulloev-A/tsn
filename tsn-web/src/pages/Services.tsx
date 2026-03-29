@@ -75,7 +75,7 @@ const Services = () => {
         <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-blue-200/40 blur-3xl" />
       </div>
 
-      <div className="relative mx-auto w-full max-w-6xl px-6">
+      <div className="relative mx-auto w-full max-w-4xl px-6">
         {/* 0s */}
         <h2
           className={`text-center text-3xl md:text-5xl font-extrabold text-slate-800 ${pop(0).className}`}
@@ -84,109 +84,112 @@ const Services = () => {
           Our Services
         </h2>
 
-        <div className="mt-10 rounded-2xl border border-slate-200 bg-white shadow-[0_10px_30px_rgba(15,23,42,0.08)]">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 p-8 md:p-10">
-            {/* 1s: image card */}
-            <div className="flex items-center justify-center">
-              <div
-                ref={imgWrapRef}
-                className={`w-full max-w-xl group ${pop(1).className}`}
-                style={pop(1).style}
-              >
-                <div className="relative rounded-3xl overflow-hidden shadow-[0_24px_60px_rgba(15,23,42,0.18)] ring-1 ring-slate-200/70 bg-white">
-                  <img
-                    src={iamImage}
-                    alt="IAM Training Session"
-                    className={[
-                      "block w-full h-[280px] sm:h-[320px] md:h-[360px] object-cover",
-                      "transition-transform duration-700 ease-out will-change-transform",
-                      inView ? "scale-[1.05]" : "scale-100",
-                      "group-hover:scale-[1.12]",
-                    ].join(" ")}
-                  />
+        <div className="mt-10 rounded-2xl border border-slate-200 bg-white shadow-[0_10px_30px_rgba(15,23,42,0.08)] overflow-hidden">
+          {/* ✅ Image on top - full width */}
+          <div
+            ref={imgWrapRef}
+            className={`w-full ${pop(1).className}`}
+            style={pop(1).style}
+          >
+            <div className="relative w-full overflow-hidden">
+              <img
+                src={iamImage}
+                alt="IAM Training Session"
+                className={[
+                  "block w-full h-[280px] sm:h-[360px] md:h-[420px] object-cover",
+                  "transition-transform duration-700 ease-out will-change-transform",
+                  inView ? "scale-[1.05]" : "scale-100",
+                ].join(" ")}
+              />
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
-                  <div className="pointer-events-none absolute -bottom-24 -right-24 h-64 w-64 rounded-full bg-yellow-300/25 blur-3xl" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
 
-                  <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
-                    <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs sm:text-sm text-white backdrop-blur-md ring-1 ring-white/20">
-                      <span className="h-2 w-2 rounded-full bg-yellow-300 shadow-[0_0_12px_rgba(250,204,21,0.9)]" />
-                      IAM Training • Real-world Labs
-                    </div>
-
-                    <h4 className="mt-3 text-white text-lg sm:text-xl font-bold leading-snug">
-                      Hands-on Identity & Access Management Training
-                    </h4>
-
-                    <p className="mt-1 text-white/85 text-xs sm:text-sm leading-relaxed max-w-md">
-                      Learn SailPoint-based IAM skills with guided exercises,
-                      real use cases, and interview-ready projects.
-                    </p>
-                  </div>
+              <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
+                <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs sm:text-sm text-white backdrop-blur-md ring-1 ring-white/20">
+                  <span className="h-2 w-2 rounded-full bg-yellow-300 shadow-[0_0_12px_rgba(250,204,21,0.9)]" />
+                  IAM Training
                 </div>
+
+                <h4 className="mt-3 text-white text-lg sm:text-xl font-bold leading-snug">
+                  Hands-on Identity & Access Management Training
+                </h4>
+
+                <p className="mt-1 text-white/85 text-xs sm:text-sm leading-relaxed max-w-md">
+                  Learn SailPoint-based IAM skills with guided exercises,
+                  real use cases, and interview-ready Q&A.
+                </p>
               </div>
-            </div>
-
-            {/* Right Content */}
-            <div className="flex flex-col justify-center">
-              {/* 2s */}
-              <h3
-                className={`text-2xl md:text-3xl font-bold text-slate-800 ${pop(2).className}`}
-                style={pop(2).style}
-              >
-                Cybersecurity Training Program
-                <span className="block text-slate-500 font-semibold mt-2">
-                  (IAM-Focused)
-                </span>
-              </h3>
-
-              {/* 3s */}
-              <p
-                className={`mt-4 text-slate-600 leading-relaxed ${pop(3).className}`}
-                style={pop(3).style}
-              >
-                Master IAM through our structured, hands-on training program
-                built around real-world enterprise use cases. Gain practical
-                experience with SailPoint and other leading IAM solutions.
-              </p>
-
-              {/* 4s */}
-              <h4
-                className={`mt-6 text-slate-800 font-bold text-lg ${pop(4).className}`}
-                style={pop(4).style}
-              >
-                What You’ll Gain:
-              </h4>
-
-              {/* bullets: 5s..9s */}
-              <ul className="mt-4 space-y-3 text-slate-700">
-                {[
-                  "Strong foundation in IAM & Identity Governance concepts",
-                  "Hands-on IAM configuration and administration experience",
-                  "Real-world project simulation",
-                  "Interview preparation & practical scenario training",
-                  "Resume guidance tailored to IAM roles",
-                ].map((item, idx) => {
-                  const delay = 5 + idx; // 1 second per line
-                  const anim = pop(delay);
-
-                  return (
-                    <li
-                      key={item}
-                      className={`flex items-start gap-3 ${anim.className}`}
-                      style={anim.style}
-                    >
-                      <CheckCircleIcon className="!text-emerald-500 mt-1" fontSize="small" />
-                      <span className="leading-relaxed">{item}</span>
-                    </li>
-                  );
-                })}
-              </ul>
             </div>
           </div>
 
+          {/* Text Content Below Image */}
+          <div className="p-8 md:p-10">
+            {/* 2s */}
+            <h3
+              className={`text-2xl md:text-3xl font-bold text-slate-800 ${pop(2).className}`}
+              style={pop(2).style}
+            >
+              Cybersecurity Training Program
+              <span className="block text-slate-500 font-semibold mt-2">
+                (IAM-Focused)
+              </span>
+            </h3>
+
+            {/* 3s */}
+            <div
+              className={`mt-4 space-y-4 text-slate-600 leading-relaxed ${pop(3).className}`}
+              style={pop(3).style}
+            >
+              <p>
+                Master IAM through our structured, hands-on training program built around real-world enterprise use cases. Gain practical experience with SailPoint and other leading IAM solutions.
+              </p>
+              <p>
+                Break into one of the fastest-growing fields in tech with TNS Tech's job-focused IAM training program. Our hands-on, self-paced curriculum equips you with real-world cybersecurity skills that employers actively seek — helping you move from learner to job-ready professional.
+              </p>
+              <p>
+                No prior cybersecurity experience? No problem. We guide you step-by-step toward becoming an in-demand IAM specialist.
+              </p>
+              <p>
+                At TNS Tech, we are committed to accelerating your success in the cybersecurity industry. Our comprehensive, self-paced Identity and Access Management (IAM) training programs are designed to equip you with in-demand, real-world skills that help you confidently transition into cybersecurity roles.
+              </p>
+            </div>
+
+            {/* 4s */}
+            <h4
+              className={`mt-6 text-slate-800 font-bold text-lg ${pop(4).className}`}
+              style={pop(4).style}
+            >
+              What You'll Gain:
+            </h4>
+
+            {/* bullets: 5s..9s */}
+            <ul className="mt-4 space-y-3 text-slate-700">
+              {[
+                "Strong foundation in IAM & Identity Governance concepts",
+                "Hands-on IAM configuration and administration experience",
+                "Real-world project simulation",
+                "Interview preparation & practical scenario training",
+                "Resume guidance tailored to IAM roles",
+              ].map((item, idx) => {
+                const delay = 5 + idx; // 1 second per line
+                const anim = pop(delay);
+
+                return (
+                  <li
+                    key={item}
+                    className={`flex items-start gap-3 ${anim.className}`}
+                    style={anim.style}
+                  >
+                    <CheckCircleIcon className="!text-emerald-500 mt-1" fontSize="small" />
+                    <span className="leading-relaxed">{item}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
           {/* Bottom Cards: 10s, 11s, 12s */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 border-t border-slate-200 p-6 md:p-8 bg-slate-50/40 rounded-b-2xl">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 border-t border-slate-200 p-6 md:p-8 bg-slate-50/40">
             <FeatureCard
               delay={10}
               pop={pop}
@@ -205,7 +208,7 @@ const Services = () => {
               delay={12}
               pop={pop}
               title="Career Advancement Path"
-              text="Roles you may pursue: IAM Administrator, SailPoint Administrator, IAM Analyst."
+              text="Roles you may pursue: IAM Administrator, SailPoint Administrator, IAM Analyst, Identity Governance Analyst, Identity Security Consultant."
               icon={<IconBadge bg="bg-indigo-100" fg="text-indigo-700" text="↑" />}
             />
           </div>
@@ -224,7 +227,7 @@ const IconBadge = ({
   fg: string;
   text: string;
 }) => (
-  <div className={`h-11 w-11 rounded-xl ${bg} flex items-center justify-center ${fg} font-bold`}>
+  <div className={`h-11 w-11 rounded-xl ${bg} flex items-center justify-center ${fg} font-bold text-xl`}>
     {text}
   </div>
 );

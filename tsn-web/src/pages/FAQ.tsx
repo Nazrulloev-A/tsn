@@ -20,12 +20,12 @@ const Faq = () => {
     () => [
       {
         q: "Do you guarantee a job?",
-        a: "Employment depends on performance, interviews, and market conditions. No guarantees.",
+        a: "Employment depends on performance, interviews, and market conditions.",
         icon: <DescriptionOutlinedIcon className="!text-sky-500" />,
       },
       {
         q: "What salary can I expect?",
-        a: "Compensation varies by role, location, and experience. Income is not guaranteed.",
+        a: "Compensation varies by role, location, and experience.",
         icon: <PaidOutlinedIcon className="!text-sky-500" />,
       },
       {
@@ -35,12 +35,12 @@ const Faq = () => {
       },
       {
         q: "How long does the program take?",
-        a: "Typically 2–6 weeks depending on your pace and weekly availability.",
+        a: "Typically 2–6 months depending on your pace and weekly availability.",
         icon: <HourglassBottomOutlinedIcon className="!text-sky-500" />,
       },
       {
         q: "Is the training live or recorded?",
-        a: "Training is structured and self-paced with guided resources. Delivery may vary by cohort/program updates.",
+        a: "Training is structured and self-paced with guided resources. Delivery may vary by program updates.",
         icon: <AccessTimeOutlinedIcon className="!text-sky-500" />,
       },
       {
@@ -151,9 +151,8 @@ const Faq = () => {
           </h3>
 
           <p className="mt-4 text-slate-700 leading-relaxed">
-            TSN provides training and career support services. We do not guarantee employment,
-            specific job titles, interview volume, or compensation levels. Income examples and role
-            descriptions are illustrative and not promises. Individual results vary based on
+            TSN provides training and career support services. Income examples and role
+            descriptions are illustrative. Individual results vary based on
             experience, performance, effort, and market demand.
           </p>
         </div>

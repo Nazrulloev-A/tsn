@@ -44,7 +44,7 @@ const About = () => {
     return () => io.disconnect();
   }, []);
 
-  // helper: staggered pop animation (if you already use animate-popIn in your tailwind)
+  // helper: staggered pop animation
   const pop = (delaySeconds: number) => {
     const reduceMotion =
       typeof window !== "undefined" &&
@@ -104,7 +104,7 @@ const About = () => {
         </svg>
       </div>
 
-      <div className="relative mx-auto w-full max-w-6xl px-6">
+      <div className="relative mx-auto w-full max-w-4xl px-6">
         {/* Title */}
         <h1
           className={`text-center text-3xl md:text-5xl font-extrabold text-slate-900 ${pop(0).className}`}
@@ -115,82 +115,104 @@ const About = () => {
         </h1>
 
         {/* Main Card */}
-        <div className="mt-10 rounded-2xl border border-slate-200 bg-white/80 backdrop-blur-sm shadow-[0_14px_40px_rgba(15,23,42,0.08)]">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 p-8 md:p-10">
-            {/* ✅ Image Card (hover zoom like Services) */}
-            <div className="flex items-center justify-center">
-              <div
-                ref={imgWrapRef}
-                className={`w-full max-w-xl group ${pop(1).className}`}
-                style={pop(1).style}
-              >
-                <div className="relative rounded-3xl overflow-hidden shadow-[0_24px_60px_rgba(15,23,42,0.18)] ring-1 ring-slate-200/70 bg-white">
-                  <img
-                    src={aboutPhoto}
-                    alt="About IAM Career Path & TSN"
-                    className={[
-                      "block w-full h-[280px] sm:h-[320px] md:h-[360px] object-cover",
-                      "transition-transform duration-700 ease-out will-change-transform",
-                      inView ? "scale-[1.05]" : "scale-100",
-                      "group-hover:scale-[1.12]",
-                    ].join(" ")}
-                  />
+        <div className="mt-10 rounded-2xl border border-slate-200 bg-white/80 backdrop-blur-sm shadow-[0_14px_40px_rgba(15,23,42,0.08)] overflow-hidden">
+          {/* ✅ Image on top - full width */}
+          <div
+            ref={imgWrapRef}
+            className={`w-full ${pop(1).className}`}
+            style={pop(1).style}
+          >
+            <div className="relative w-full overflow-hidden">
+              <img
+                src={aboutPhoto}
+                alt="About IAM Career Path & TSN"
+                className={[
+                  "block w-full h-[280px] sm:h-[360px] md:h-[420px] object-cover",
+                  "transition-transform duration-700 ease-out will-change-transform",
+                  inView ? "scale-[1.05]" : "scale-100",
+                ].join(" ")}
+              />
 
-                  {/* soft overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" />
-                  <div className="pointer-events-none absolute -bottom-24 -right-24 h-64 w-64 rounded-full bg-yellow-300/20 blur-3xl" />
-
-                  {/* overlay text badge */}
-                  <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
-                    <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs sm:text-sm text-white backdrop-blur-md ring-1 ring-white/20">
-                      <span className="h-2 w-2 rounded-full bg-yellow-300 shadow-[0_0_12px_rgba(250,204,21,0.9)]" />
-                      TSN • IAM Career Path • Since 2011
-                    </div>
-
-                    <h4 className="mt-3 text-white text-lg sm:text-xl font-bold leading-snug">
-                      Practical, Accelerated, Hands-on Training
-                    </h4>
-
-                    <p className="mt-1 text-white/85 text-xs sm:text-sm leading-relaxed max-w-md">
-                      Job-ready guidance to help learners transition confidently into IT careers.
-                    </p>
-                  </div>
+              {/* soft overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
+              
+              {/* overlay text badge */}
+              <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
+                <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs sm:text-sm text-white backdrop-blur-md ring-1 ring-white/20">
+                  <span className="h-2 w-2 rounded-full bg-yellow-300 shadow-[0_0_12px_rgba(250,204,21,0.9)]" />
+                  TSN • IAM Career Path
                 </div>
+
+                <h4 className="mt-3 text-white text-lg sm:text-xl font-bold leading-snug">
+                  Practical, Accelerated, Hands-on Training
+                </h4>
+
+                <p className="mt-1 text-white/85 text-xs sm:text-sm leading-relaxed max-w-md">
+                  Job-ready guidance to help learners transition confidently into IT careers.
+                </p>
               </div>
-            </div>
-
-            {/* Text */}
-            <div className="flex flex-col justify-center">
-              <h2
-                className={`text-xl md:text-2xl font-bold text-slate-900 ${pop(2).className}`}
-                style={pop(2).style}
-              >
-                About IAM Career Path &amp; TSN
-              </h2>
-
-              <p
-                className={`mt-4 text-slate-700 leading-relaxed ${pop(3).className}`}
-                style={pop(3).style}
-              >
-                IAM Career Path, founded by TSN IT Service Provider in 2011, is dedicated to
-                helping individuals confidently transition into IT careers. For over{" "}
-                <span className="font-semibold text-slate-900">13 years</span>, we have provided
-                practical, accelerated, hands-on training for a wide range of learners.
-              </p>
-
-              <p
-                className={`mt-4 text-slate-700 leading-relaxed ${pop(4).className}`}
-                style={pop(4).style}
-              >
-                Our focus is Identity &amp; Access Management (IAM) — one of the most in-demand
-                areas in cybersecurity — with job-ready guidance that helps you go from learner
-                to confident professional.
-              </p>
             </div>
           </div>
 
+          {/* Text Content Below Image */}
+          <div className="p-8 md:p-10">
+            <h2
+              className={`text-xl md:text-2xl font-bold text-slate-900 ${pop(2).className}`}
+              style={pop(2).style}
+            >
+              About IAM Career Path &amp; TSN
+            </h2>
+
+            <div
+              className={`mt-4 space-y-4 text-slate-700 leading-relaxed ${pop(3).className}`}
+              style={pop(3).style}
+            >
+              <p>
+                IAM Career Path, founded by TNS Tech in 2025, was built with a clear purpose: to help motivated individuals launch meaningful careers in IT and cybersecurity. We specialize in Identity & Access Management (IAM) — a critical, high-growth field where skilled professionals are in greater demand than ever. But we don't just teach concepts. We focus on real-world, job-ready skills that prepare you to step confidently into roles that matter.
+              </p>
+
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">Why We Started</h3>
+                <p>
+                  We saw too many talented people held back by training that was either too theoretical, too slow, or disconnected from what employers actually need. So we created a better way — one rooted in hands-on learning, practical tools, and career-focused support.
+                </p>
+              </div>
+
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold text-slate-900 mb-3">What We Believe</h3>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2">
+                    <CheckCircleIcon className="!text-green-500 mt-0.5" fontSize="small" />
+                    <span><strong className="font-semibold">Learning should be practical.</strong> You gain experience with industry-standard tools like SailPoint, working through real-world scenarios you'll encounter on the job.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircleIcon className="!text-green-500 mt-0.5" fontSize="small" />
+                    <span><strong className="font-semibold">Support shouldn't stop at training.</strong> From interview preparation to resume guidance, we help you navigate the hiring process with clarity and confidence.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircleIcon className="!text-green-500 mt-0.5" fontSize="small" />
+                    <span><strong className="font-semibold">Your background doesn't define your future.</strong> No prior cybersecurity experience? No problem. We meet you where you are and guide you step by step.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <p className="mt-6 pt-2 border-t border-slate-100 italic text-slate-600">
+                Our goal is simple: to help you go from learner to confident, job-ready professional — as quickly and effectively as possible.
+              </p>
+            </div>
+
+            <p
+              className={`mt-6 text-slate-700 leading-relaxed ${pop(4).className}`}
+              style={pop(4).style}
+            >
+              Our focus is Identity &amp; Access Management (IAM) — one of the most in-demand
+              areas in cybersecurity — with job-ready guidance that helps you go from learner
+              to confident professional.
+            </p>
+          </div>
+
           {/* Bottom two cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-slate-200 bg-white/70 px-8 md:px-10 py-8 rounded-b-2xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-slate-200 bg-white/70 px-8 md:px-10 py-8">
             <InfoCard
               title="Our Mission:"
               items={[
@@ -208,10 +230,9 @@ const About = () => {
                 "Hands-on, industry-relevant training",
                 "Interview and recruiter preparation",
                 "Career-focused guidance",
-                "Measurable results over certifications",
               ]}
               pop={pop}
-              delayStart={10}
+              delayStart={6}
             />
           </div>
         </div>

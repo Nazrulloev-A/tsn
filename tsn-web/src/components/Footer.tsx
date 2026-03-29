@@ -20,14 +20,14 @@ const Footer: React.FC = () => {
             <div className="mt-6 space-y-4 text-white/80">
               <div>
                 <span className="font-semibold text-white">E.</span>{" "}
-                support@tsnweb.com
+                tsn.web2026@gmail.com
               </div>
               <div>
                 <span className="font-semibold text-white">P.</span>{" "}
-                1.800.555.1234
+                1.973.850.9699
               </div>
               <div className="pt-2">
-                Houston, TX 77079
+                Austin, TX 78701
                 <br />
                 United States
               </div>

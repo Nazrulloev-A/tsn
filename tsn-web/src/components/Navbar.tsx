@@ -16,12 +16,12 @@ const NAV_ITEMS: Array<{ key: SectionKey; label: string }> = [
 
 const NAV_OFFSET = 96;
 
-// ✅ service dropdown with routes
-const SERVICE_LINKS = [
-  { label: "Job Placement-Driven Model", path: "/job-placement-driven-model" },
-  { label: "Flexible, Self-Paced Learning", path: "/flexible-self-paced-learning" },
-  { label: "Career Advancement Path", path: "/career-advancement-path" },
-] as const;
+// ✅ service dropdown with routes - COMMENTED OUT TO DISABLE DROPDOWN
+// const SERVICE_LINKS = [
+//   { label: "Job Placement-Driven Model", path: "/job-placement-driven-model" },
+//   { label: "Flexible, Self-Paced Learning", path: "/flexible-self-paced-learning" },
+//   { label: "Career Advancement Path", path: "/career-advancement-path" },
+// ] as const;
 
 const Navbar: React.FC = () => {
   const [active, setActive] = useState<SectionKey>("home");
@@ -40,10 +40,10 @@ const Navbar: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const mobileCloseTimer = useRef<number | null>(null);
 
-  // services dropdown
-  const [servicesOpen, setServicesOpen] = useState(false);
-  const [servicesClosing, setServicesClosing] = useState(false);
-  const servicesCloseTimer = useRef<number | null>(null);
+  // services dropdown - DISABLED
+  // const [servicesOpen, setServicesOpen] = useState(false);
+  // const [servicesClosing, setServicesClosing] = useState(false);
+  // const servicesCloseTimer = useRef<number | null>(null);
 
   // ✅ keep active underline correct for routes automatically
   useEffect(() => {
@@ -119,7 +119,7 @@ const Navbar: React.FC = () => {
     }
 
     setMobileOpen(false);
-    setServicesOpen(false);
+    // setServicesOpen(false); // DISABLED
   };
 
   // underline positioning
@@ -157,20 +157,20 @@ const Navbar: React.FC = () => {
     mobileCloseTimer.current = window.setTimeout(() => setMobileOpen(false), 150);
   };
 
-  // ✅ better dropdown open/close with smooth animation
-  const openServices = () => {
-    if (servicesCloseTimer.current) window.clearTimeout(servicesCloseTimer.current);
-    setServicesClosing(false);
-    setServicesOpen(true);
-  };
-  const closeServices = () => {
-    if (servicesCloseTimer.current) window.clearTimeout(servicesCloseTimer.current);
-    setServicesClosing(true);
-    servicesCloseTimer.current = window.setTimeout(() => {
-      setServicesOpen(false);
-      setServicesClosing(false);
-    }, 120);
-  };
+  // ✅ DISABLED dropdown open/close functions
+  // const openServices = () => {
+  //   if (servicesCloseTimer.current) window.clearTimeout(servicesCloseTimer.current);
+  //   setServicesClosing(false);
+  //   setServicesOpen(true);
+  // };
+  // const closeServices = () => {
+  //   if (servicesCloseTimer.current) window.clearTimeout(servicesCloseTimer.current);
+  //   setServicesClosing(true);
+  //   servicesCloseTimer.current = window.setTimeout(() => {
+  //     setServicesOpen(false);
+  //     setServicesClosing(false);
+  //   }, 120);
+  // };
 
   // ✅ IMPORTANT FIX:
   // - On HOME at top: fully transparent (NO blur, NO tint)
@@ -182,7 +182,7 @@ const Navbar: React.FC = () => {
       ? "bg-black/45 backdrop-blur-md"
       : "bg-transparent";
 
-  const activeServicePath = location.pathname;
+  // const activeServicePath = location.pathname; // DISABLED
 
   return (
     <nav className={`fixed top-0 left-0 w-full z-50 ${navBgClass} transition-all duration-300`}>
@@ -205,81 +205,7 @@ const Navbar: React.FC = () => {
             className="relative flex items-center gap-10 text-sm uppercase tracking-wider text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.75)]"
           >
             {NAV_ITEMS.map((item) => {
-              if (item.key === "services") {
-                return (
-                  <div
-                    key={item.key}
-                    className="relative"
-                    onMouseEnter={openServices}
-                    onMouseLeave={closeServices}
-                  >
-                    <button
-                      ref={(el) => {
-                        itemRefs.current[item.key] = el;
-                      }}
-                      onClick={() => scrollToSection(item.key)}
-                      className={`relative transition-colors duration-200 ${
-                        active === item.key ? "text-white" : "text-white/85"
-                      } hover:text-white`}
-                      aria-haspopup="menu"
-                      aria-expanded={servicesOpen}
-                    >
-                      {item.label}
-                    </button>
-
-                    {/* Dropdown */}
-                    {(servicesOpen || servicesClosing) && (
-                      <div
-                        className={[
-                          "absolute left-1/2 -translate-x-1/2 top-[42px] w-[320px]",
-                          "rounded-2xl border border-white/10 bg-black/75 backdrop-blur-md shadow-2xl overflow-hidden",
-                          servicesClosing ? "animate-dropdownOut" : "animate-dropdownIn",
-                        ].join(" ")}
-                        onMouseEnter={openServices}
-                        onMouseLeave={closeServices}
-                        role="menu"
-                      >
-                        <div className="py-2">
-                          {SERVICE_LINKS.map((svc) => {
-                            const isActive = activeServicePath === svc.path;
-
-                            return (
-                              <button
-                                key={svc.path}
-                                type="button"
-                                onClick={() => {
-                                  setServicesOpen(false);
-                                  setServicesClosing(false);
-                                  navigate(svc.path);
-                                  setActive("services");
-                                }}
-                                className={[
-                                  "w-full text-left px-5 py-3 text-sm tracking-wide transition relative",
-                                  isActive
-                                    ? "text-yellow-200 bg-white/10"
-                                    : "text-white/90 hover:bg-white/10",
-                                ].join(" ")}
-                                role="menuitem"
-                              >
-                                <span className="flex items-center justify-between">
-                                  {svc.label}
-                                  {isActive && (
-                                    <span
-                                      className="ml-3 inline-block h-[2px] w-7 bg-yellow-400 rounded"
-                                      style={{ boxShadow: "0 0 10px rgba(250,204,21,0.9)" }}
-                                    />
-                                  )}
-                                </span>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              }
-
+              // DISABLED: Removed dropdown wrapper for services
               return (
                 <button
                   key={item.key}
